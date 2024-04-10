@@ -49,6 +49,8 @@ class AppWebHookJob < ApplicationJob
                                    name: @release.name,
                                    app_name: @release.app_name,
                                    device_type: @channel.device_type,
+                                   channel_name: @channel.name,
+                                   channel_scheme: @channel.scheme.name,
                                    release_version: @release.release_version,
                                    build_version: @release.build_version,
                                    bundle_id: @release.bundle_id,
