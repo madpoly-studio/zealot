@@ -68,7 +68,7 @@ class Release < ApplicationRecord
   end
 
   def app_name
-    "#{app.name} #{scheme.name} #{channel.name}"
+    "#{app.name} - #{scheme.name} - #{channel.name}"
   end
 
   def size
