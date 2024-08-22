@@ -48,29 +48,39 @@ class AppWebHookJob < ApplicationJob
   end
 
   def build(body)
+    users = Array.new
+    @channel.app.collaborators.each do |collaborator|
+      user = User.find(collaborator['user_id'])
+      users.push({id: user.id, name: user.username, email: user.email})
+    end
+
     ApplicationController.render inline: body,
-                                 type: :jb,
-                                 assigns: {
-                                   event: @event,
-                                   username: @user.username,
-                                   email: @user.email,
-                                   title: title,
-                                   name: @release.name,
-                                   app_name: @release.app_name,
-                                   device_type: @channel.device_type,
-                                   channel_name: @channel.name,
-                                   channel_scheme: @channel.scheme.name,
-                                   release_version: @release.release_version,
-                                   build_version: @release.build_version,
-                                   bundle_id: @release.bundle_id,
-                                   changelog: @release.text_changelog,
-                                   file_size: @release.file_size,
-                                   release_url: @release.release_url,
-                                   install_url: @release.install_url,
-                                   icon_url: @release.icon_url,
-                                   qrcode_url: @release.qrcode_url,
-                                   uploaded_at: @release.created_at
-                                 }
+                                type: :jb,
+                                assigns: {
+                                  event: @event,
+                                  username: @user.username,
+                                  email: @user.email,
+                                  title: title,
+                                  name: @release.name,
+                                  app_name: @release.app_name,
+                                  device_type: @channel.device_type,
+                                  channel_name: @channel.name,
+                                  channel_scheme: @channel.scheme.name,
+                                  channel_password: @channel.password,
+                                  release_version: @release.release_version,
+                                  build_version: @release.build_version,
+                                  bundle_id: @release.bundle_id,
+                                  changelog: @release.text_changelog,
+                                  changelog_html: Kramdown::Document.new(@release.text_changelog).to_html,
+                                  file_size: @release.file_size,
+                                  release_url: @release.release_url,
+                                  release_id: @release.release_url.match(/(\d+)$/)[1],
+                                  install_url: @release.install_url,
+                                  icon_url: @release.icon_url,
+                                  qrcode_url: @release.qrcode_url,
+                                  uploaded_at: @release.created_at,
+                                  collaborators: users.to_json,
+                                }
   end
 
   def default_body
