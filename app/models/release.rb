@@ -109,9 +109,13 @@ class Release < ApplicationRecord
   end
 
   def download_filename
-    [
-      channel.slug, release_version, build_version, created_at.strftime('%Y%m%d%H%M')
-    ].join('_') + file_extname
+    if self.custom_fields.any? && self.custom_fields[0]['value'].present?
+      self.custom_fields[0]['value'] + file_extname
+    else
+      [
+        self.bundle_id, scheme.name, channel.name, "v#{release_version}", build_version, channel.slug, created_at.strftime('%Y%m%d%H%M')
+      ].join('_') + file_extname
+    end
   end
 
   def empty_changelog(use_default_changelog = true)
@@ -233,8 +237,10 @@ class Release < ApplicationRecord
   end
 
   def convert_custom_fields
+    logger.info "*** custom_fields #{custom_fields}"
     if json_string?(custom_fields)
       self.custom_fields = JSON.parse(custom_fields)
+      logger.info "***" + self.custom_fields[0]['value']
     elsif custom_fields.blank?
       self.custom_fields = []
     else
