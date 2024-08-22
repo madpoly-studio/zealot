@@ -1,4 +1,4 @@
-.app-detail.card.mb-3
+﻿.app-detail.card.mb-3
   .card-header
     h3.card-title
       = app_icon(release, class: 'app-icon rounded-circle img-bordered-sm')
@@ -51,7 +51,10 @@
         - release.custom_fields.each do |field|
           li title="#{field['name']}" data-bs-toggle="tooltip" data-bs-custom-class="default-tooltip"
             i class="#{field['icon'] || 'fas fa-hashtag'}"
-            = field['value']
+            - if field['name'] == 'az_release_url'
+              = link_to 'Azure release', field['value']
+            - else
+              = field['value']
       li title="#{t('releases.show.source')}" data-bs-toggle="tooltip" data-bs-custom-class="default-tooltip"
         i.fas.fa-compass
         - if release.ci_url.blank?
