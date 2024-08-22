@@ -51,7 +51,10 @@
         - release.custom_fields.each do |field|
           li title="#{field['name']}" data-bs-toggle="tooltip" data-bs-custom-class="default-tooltip"
             i class="#{field['icon'] || 'fa-solid fa-hashtag'}"
-            = field['value']
+            - if field['name'] == 'az_release_url'
+              = link_to 'Azure release', field['value']
+            - else
+              = field['value']
       li title="#{t('releases.show.source')}" data-bs-toggle="tooltip" data-bs-custom-class="default-tooltip"
         i.fa-solid.fa-compass
         - if release.ci_url.blank?
