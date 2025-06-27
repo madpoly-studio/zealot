@@ -6,10 +6,11 @@ class Download::ReleasesController < ApplicationController
   rescue_from ActiveRecord::RecordNotFound, with: :render_not_found_entity_response
 
   def show
-    # password protected check
-    unless helpers.logged_in_or_without_auth?(@release) 
-      return redirect_to channel_release_path(@release.channel, @release, back_url: @release.download_url)
-    end
+    # !NOTE: do NOT need to authenticate PASS users
+    # # password protected check
+    # unless helpers.logged_in_or_without_auth?(@release) 
+    #   return redirect_to channel_release_path(@release.channel, @release, back_url: @release.download_url)
+    # end
 
     return render_not_found_entity_response unless File.exist?(@release.file.path.to_s)
 
